@@ -104,13 +104,13 @@ class BillingManager(app: Application, private val store: Store) : PurchasesUpda
                 val has = purchases.any {
                     it.purchaseState == Purchase.PurchaseState.PURCHASED && it.products.contains(PRODUCT_PRO)
                 }
-                setPro(has)
+                grantPro(has)
                 purchases.forEach { handle(it, silent = true) }
             }
         }
     }
 
-    private fun setPro(value: Boolean) {
+    private fun grantPro(value: Boolean) {
         store.isPro = value
         isPro = value
     }
@@ -118,7 +118,7 @@ class BillingManager(app: Application, private val store: Store) : PurchasesUpda
     private fun handle(purchase: Purchase, silent: Boolean = false) {
         if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) return
         if (purchase.products.contains(PRODUCT_PRO)) {
-            setPro(true)
+            grantPro(true)
             if (!purchase.isAcknowledged) {
                 val ack = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
                 client.acknowledgePurchase(ack) { }
