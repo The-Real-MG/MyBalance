@@ -173,6 +173,13 @@ class Store(context: Context) {
         p.edit().putString("funds", arr.toString()).apply()
     }
 
+    /** Versione Pro (copia locale; la verita' e' in Google Play e viene riletta all'avvio). */
+    var isPro: Boolean
+        get() = p.getBoolean("pro", false)
+        set(value) {
+            p.edit().putBoolean("pro", value).apply()
+        }
+
     var theme: ThemeMode
         get() = try {
             ThemeMode.valueOf(p.getString("theme", "LIGHT") ?: "LIGHT")

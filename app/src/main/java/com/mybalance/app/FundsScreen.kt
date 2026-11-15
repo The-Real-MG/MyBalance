@@ -292,12 +292,14 @@ private fun FundForm(vm: MainViewModel, editId: Long, available: Long, currency:
 fun FundsScreen(vm: MainViewModel) {
     val profile = vm.profile ?: return
     var formOpen by rememberSaveable { mutableStateOf(false) }
+    var showPro by remember { mutableStateOf(false) }
     var editId by rememberSaveable { mutableStateOf(-1L) }
     val today = LocalDate.now()
     val unallocated = unallocatedCents(profile, vm.funds, vm.txs, today)
 
     BackHandler(enabled = formOpen) { formOpen = false }
 
+    PurchaseDialogs(vm, showPro, { showPro = false }, false, {})
     if (formOpen) {
         val existing = vm.funds.firstOrNull { it.id == editId }
         val available = maxOf(0L, unallocated + (if (existing != null) fundBalanceCents(existing, vm.txs, LocalDate.now()) else 0L))
@@ -308,8 +310,12 @@ fun FundsScreen(vm: MainViewModel) {
             profile = profile,
             unallocated = unallocated,
             onNew = {
-                editId = -1L
-                formOpen = true
+                if (!vm.billing.isPro && vm.funds.size >= FREE_FUND_LIMIT) {
+                    showPro = true
+                } else {
+                    editId = -1L
+                    formOpen = true
+                }
             },
             onEdit = { f ->
                 editId = f.id

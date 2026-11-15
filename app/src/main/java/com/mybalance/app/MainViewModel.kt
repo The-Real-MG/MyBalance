@@ -28,6 +28,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var langMode by mutableStateOf(store.lang)
         private set
 
+    val billing = BillingManager(app, store)
+
     private var failedLogins = 0
     private var lockedUntil = 0L
 

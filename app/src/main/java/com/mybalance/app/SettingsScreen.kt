@@ -44,6 +44,8 @@ fun SettingsScreen(vm: MainViewModel) {
     val importData = rememberImporter(vm)
 
     var dialog by remember { mutableStateOf(Dialog.NONE) }
+    var showPro by remember { mutableStateOf(false) }
+    var showCoffee by remember { mutableStateOf(false) }
     var nameInput by remember { mutableStateOf("") }
     var oldPass by remember { mutableStateOf("") }
     var newPass by remember { mutableStateOf("") }
@@ -110,6 +112,20 @@ fun SettingsScreen(vm: MainViewModel) {
                 Chip("Italiano", vm.langMode == LangMode.IT, { vm.setLang(LangMode.IT) })
                 Chip("English", vm.langMode == LangMode.EN, { vm.setLang(LangMode.EN) })
             }
+        }
+
+        PurchaseDialogs(vm, showPro, { showPro = false }, showCoffee, { showCoffee = false })
+
+        // Pro e donazioni
+        SurfaceCard {
+            SettingRow(
+                Ic.STAR,
+                if (vm.billing.isPro) l("MyBalance Pro (active)", "MyBalance Pro (attivo)") else l("Go Pro", "Passa a Pro"),
+                value = if (vm.billing.isPro) null else (vm.billing.prices[PRODUCT_PRO] ?: "2 €")
+            ) {
+                if (!vm.billing.isPro) showPro = true
+            }
+            SettingRow(Ic.COIN, l("Buy me a coffee", "Offrimi un caffè")) { showCoffee = true }
         }
 
         // credenziali
