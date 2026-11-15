@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.mybalance.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.mybalance.app"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         // Su GitHub il numero di versione cresce a ogni build, cosi' Android accetta sempre l'aggiornamento.
         versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
         versionName = "1.0"
@@ -28,10 +28,27 @@ android {
         }
     }
 
+    // Chiave di caricamento per Google Play (solo quando la build e' avviata con i "Secrets" di GitHub).
+    val uploadFile = System.getenv("UPLOAD_KEYSTORE_FILE")
+    if (uploadFile != null) {
+        signingConfigs {
+            create("upload") {
+                storeFile = file(uploadFile)
+                storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("UPLOAD_KEY_ALIAS")
+                keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("mybalance")
+            signingConfig = if (uploadFile != null) {
+                signingConfigs.getByName("upload")
+            } else {
+                signingConfigs.getByName("mybalance")
+            }
         }
     }
 
