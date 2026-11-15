@@ -101,13 +101,17 @@ fun AppRoot(vm: MainViewModel) {
     CompositionLocalProvider(LocalL provides l, LocalLocale provides locale) {
         MyBalanceTheme(dark) {
             val p = LocalPalette.current
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(p.bg)
-                    .safeDrawingPadding()
-            ) {
-                Router(vm)
+            var showIntro by rememberSaveable { mutableStateOf(true) }
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(p.bg)
+                        .safeDrawingPadding()
+                ) {
+                    Router(vm)
+                }
+                if (showIntro) IntroSplash { showIntro = false }
             }
         }
     }

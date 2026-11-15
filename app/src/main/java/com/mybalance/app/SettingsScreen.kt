@@ -1,5 +1,6 @@
 package com.mybalance.app
 
+import androidx.compose.ui.text.style.TextAlign
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -154,7 +155,17 @@ fun SettingsScreen(vm: MainViewModel) {
                 dialog = Dialog.DELETE1
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Text(
+            "A game made by $DEVELOPER_NAME\n© 2026 $DEVELOPER_NAME",
+            color = p.muted,
+            fontSize = 13.sp,
+            letterSpacing = 1.sp,
+            lineHeight = 20.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp)
+        )
     }
 
     when (dialog) {
