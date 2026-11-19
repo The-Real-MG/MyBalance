@@ -71,12 +71,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContent { AppRoot(vm) }
+        // l'intro parte a ogni avvio "da zero" (savedInstanceState nullo); non si ripete alla rotazione dello schermo
+        val freshStart = savedInstanceState == null
+        setContent { AppRoot(vm, freshStart) }
     }
 }
 
 @Composable
-fun AppRoot(vm: MainViewModel) {
+fun AppRoot(vm: MainViewModel, freshStart: Boolean = true) {
     val systemLang = LocalConfiguration.current.locales[0].language
     val italian = when (vm.langMode) {
         LangMode.IT -> true
@@ -101,7 +103,7 @@ fun AppRoot(vm: MainViewModel) {
     CompositionLocalProvider(LocalL provides l, LocalLocale provides locale) {
         MyBalanceTheme(dark) {
             val p = LocalPalette.current
-            var showIntro by rememberSaveable { mutableStateOf(true) }
+            var showIntro by remember { mutableStateOf(freshStart) }
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier

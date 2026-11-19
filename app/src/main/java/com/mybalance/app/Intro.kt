@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 /** Nome dello sviluppatore (uguale al nome del profilo su Google Play). */
 const val DEVELOPER_NAME = "TheRealMG"
 
-/** Intro a schermo nero: "A game by" piccolo sopra, nome grande in dissolvenza. Tocca per saltare. */
+/** Intro a schermo nero: "An app by" piccolo sopra, nome grande in dissolvenza. Tocca per saltare. */
 @Composable
 fun IntroSplash(onDone: () -> Unit) {
     val small = remember { Animatable(0f) }
@@ -59,7 +59,7 @@ fun IntroSplash(onDone: () -> Unit) {
             modifier = Modifier.graphicsLayer { alpha = all.value }
         ) {
             Text(
-                "A game by",
+                "An app by",
                 color = Color.White,
                 fontSize = 14.sp,
                 letterSpacing = 2.sp,

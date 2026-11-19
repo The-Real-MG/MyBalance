@@ -156,7 +156,7 @@ fun SettingsScreen(vm: MainViewModel) {
             }
         }
         Text(
-            "A game made by $DEVELOPER_NAME\n© 2026 $DEVELOPER_NAME",
+            "An app made by $DEVELOPER_NAME\n© 2026 $DEVELOPER_NAME",
             color = p.muted,
             fontSize = 13.sp,
             letterSpacing = 1.sp,
