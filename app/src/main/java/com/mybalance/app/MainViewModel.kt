@@ -30,6 +30,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     val billing = BillingManager(app, store)
 
+    /** True quando l'intro e' finita (resta vero alla rotazione; riparte a ogni avvio da zero). */
+    var introDone by mutableStateOf(false)
+        private set
+
+    fun finishIntro() {
+        introDone = true
+    }
+
     private var failedLogins = 0
     private var lockedUntil = 0L
 

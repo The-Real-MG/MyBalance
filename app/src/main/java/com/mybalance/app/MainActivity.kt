@@ -71,14 +71,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        // l'intro parte a ogni avvio "da zero" (savedInstanceState nullo); non si ripete alla rotazione dello schermo
-        val freshStart = savedInstanceState == null
-        setContent { AppRoot(vm, freshStart) }
+        setContent { AppRoot(vm) }
     }
 }
 
 @Composable
-fun AppRoot(vm: MainViewModel, freshStart: Boolean = true) {
+fun AppRoot(vm: MainViewModel) {
     val systemLang = LocalConfiguration.current.locales[0].language
     val italian = when (vm.langMode) {
         LangMode.IT -> true
@@ -103,17 +101,19 @@ fun AppRoot(vm: MainViewModel, freshStart: Boolean = true) {
     CompositionLocalProvider(LocalL provides l, LocalLocale provides locale) {
         MyBalanceTheme(dark) {
             val p = LocalPalette.current
-            var showIntro by remember { mutableStateOf(freshStart) }
             Box(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(p.bg)
-                        .safeDrawingPadding()
-                ) {
-                    Router(vm)
+                // l'app vera si costruisce solo a intro finita, cosi' le sue animazioni partono allora
+                AnimatedVisibility(visible = vm.introDone, enter = fadeIn(tween(400))) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(p.bg)
+                            .safeDrawingPadding()
+                    ) {
+                        Router(vm)
+                    }
                 }
-                if (showIntro) IntroSplash { showIntro = false }
+                if (!vm.introDone) IntroSplash { vm.finishIntro() }
             }
         }
     }
