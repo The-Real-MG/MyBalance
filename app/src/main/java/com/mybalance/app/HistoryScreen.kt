@@ -44,6 +44,7 @@ fun HistoryScreen(vm: MainViewModel, onEdit: (Tx) -> Unit) {
     val cur = profile.currency
     val today = LocalDate.now()
     var pendingDelete by remember { mutableStateOf<Tx?>(null) }
+    var detail by remember { mutableStateOf<DetailTarget?>(null) }
 
     var query by rememberSaveable { mutableStateOf("") }
     var typeIdx by rememberSaveable { mutableStateOf(0) } // 0 tutti, 1 incassi, 2 spese
@@ -168,7 +169,7 @@ fun HistoryScreen(vm: MainViewModel, onEdit: (Tx) -> Unit) {
         }
         items(recurring, key = { it.id }) { tx ->
             RecurringRow(
-                modifier = Modifier.animateItem(),
+                modifier = Modifier.animateItem().clickable { detail = DetailTarget(tx, null, false) },
                 tx = tx,
                 currency = cur,
                 today = today,
@@ -209,14 +210,17 @@ fun HistoryScreen(vm: MainViewModel, onEdit: (Tx) -> Unit) {
                     cancelled = h.cancelled,
                     onCancel = { vm.skipOccurrence(h.tx.id, h.date) },
                     onRestore = { vm.restoreOccurrence(h.tx.id, h.date) },
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier.animateItem().clickable { detail = DetailTarget(h.tx, h.date, h.cancelled) },
                     note = fundNote(h.tx, vm.funds, l)
                 )
             } else {
-                TxRow(h.tx, cur, onDelete = { pendingDelete = h.tx }, note = fundNote(h.tx, vm.funds, l), modifier = Modifier.animateItem())
+                TxRow(h.tx, cur, onDelete = { pendingDelete = h.tx }, note = fundNote(h.tx, vm.funds, l), modifier = Modifier.animateItem().clickable { detail = DetailTarget(h.tx, h.tx.startDay, false) })
             }
         }
     }
+
+    val dt = detail
+    if (dt != null) TxDetailSheet(vm, dt) { detail = null }
 
     val toDelete = pendingDelete
     if (toDelete != null) {
